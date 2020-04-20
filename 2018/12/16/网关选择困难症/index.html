@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="I0UIedGytxUawf07so-sCcgSIdS1_8tqUGHgqFJb-O4">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="vBAMbKbeAu">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.6.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.6.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.6.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <meta name="description" content="近期因为新项目需要，我们的后端选用的技术栈是spring cloud微服务，需要对网关进行选型，所以有了一下这篇网关的性能测试分析，对你有帮助的，关注一下公众号：二当家的黑板报。 测试机器  使用的是4核4G内存的虚拟机，系统是Ubuntu18 wrk测试以下为10个线程，200并发，持续30秒，对不同网关的测试结果。（wrk使用的是http1.1版本） 直连 Nginx zuul（热身后），时不">
+<meta name="keywords" content="Nginx,gateway,zuul,linkerd,wrk测试,ab测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网关选择困难症">
+<meta property="og:url" content="https://www.edjdhbb.com/2018/12/16/网关选择困难症/index.html">
+<meta property="og:site_name" content="二当家的黑板报">
+<meta property="og:description" content="近期因为新项目需要，我们的后端选用的技术栈是spring cloud微服务，需要对网关进行选型，所以有了一下这篇网关的性能测试分析，对你有帮助的，关注一下公众号：二当家的黑板报。 测试机器  使用的是4核4G内存的虚拟机，系统是Ubuntu18 wrk测试以下为10个线程，200并发，持续30秒，对不同网关的测试结果。（wrk使用的是http1.1版本） 直连 Nginx zuul（热身后），时不">
+<meta property="og:locale" content="zh">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gkfxa6oj30iw0boacs.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl5o1ozj30tk09umz9.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl4ab7hj30t409yq4y.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl72bsej30t20acac7.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glhcigwj30sg0a876f.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gld5mgwj30tc0am0ux.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glfwxd6j30u0163gs2.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glk3lajj30u0196q96.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glbuwfkj30u01ar44o.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjqy4l7j30u01awn34.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjz07ahj30u016yn37.jpg">
+<meta property="og:updated_time" content="2020-02-15T07:34:11.006Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="网关选择困难症">
+<meta name="twitter:description" content="近期因为新项目需要，我们的后端选用的技术栈是spring cloud微服务，需要对网关进行选型，所以有了一下这篇网关的性能测试分析，对你有帮助的，关注一下公众号：二当家的黑板报。 测试机器  使用的是4核4G内存的虚拟机，系统是Ubuntu18 wrk测试以下为10个线程，200并发，持续30秒，对不同网关的测试结果。（wrk使用的是http1.1版本） 直连 Nginx zuul（热身后），时不">
+<meta name="twitter:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gkfxa6oj30iw0boacs.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="https://www.edjdhbb.com/2018/12/16/网关选择困难症/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>网关选择困难症 | 二当家的黑板报</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-128978284-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-128978284-2');
+</script>
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?7aa3158229d0979a9f8f67845d61d0cf";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">二当家的黑板报</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">Just because you can, doesn’t mean you should.</h1>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>Search</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.edjdhbb.com/2018/12/16/网关选择困难症/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="二当家的">
+      <meta itemprop="description" content="技术改变世界">
+      <meta itemprop="image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="二当家的黑板报">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">网关选择困难症
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-12-16 11:58:21" itemprop="dateCreated datePublished" datetime="2018-12-16T11:58:21+08:00">2018-12-16</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2020-02-15 15:34:11" itemprop="dateModified" datetime="2020-02-15T15:34:11+08:00">2020-02-15</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术测评/" itemprop="url" rel="index"><span itemprop="name">技术测评</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/12/16/网关选择困难症/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">Comments: </span> <span class="post-comments-count valine-comment-count" data-xid="/2018/12/16/网关选择困难症/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             Views:  
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">1.8k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">2 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+	
+      
+      
+
+      
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- post_header -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2680035919090213" data-ad-slot="6024987105" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+        <p>近期因为新项目需要，我们的后端选用的技术栈是spring cloud微服务，需要对网关进行选型，所以有了一下这篇网关的性能测试分析，对你有帮助的，关注一下公众号：<code>二当家的黑板报</code>。</p>
+<h2 id="测试机器"><a href="#测试机器" class="headerlink" title="测试机器"></a>测试机器</h2><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gkfxa6oj30iw0boacs.jpg" alt="image-20181121104328341"></p>
+<p> 使用的是4核4G内存的虚拟机，系统是Ubuntu18</p>
+<h2 id="wrk测试"><a href="#wrk测试" class="headerlink" title="wrk测试"></a>wrk测试</h2><p>以下为10个线程，200并发，持续30秒，对不同网关的测试结果。（wrk使用的是http1.1版本）</p>
+<h3 id="直连"><a href="#直连" class="headerlink" title="直连"></a>直连</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl5o1ozj30tk09umz9.jpg" alt="image-20181120151113284"></p>
+<h3 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl4ab7hj30t409yq4y.jpg" alt="image-20181120151226801"></p>
+<h3 id="zuul（热身后），时不时有timeout的情况"><a href="#zuul（热身后），时不时有timeout的情况" class="headerlink" title="zuul（热身后），时不时有timeout的情况"></a>zuul（热身后），时不时有timeout的情况</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl72bsej30t20acac7.jpg" alt="image-20181120151329457"></p>
+<h3 id="gateway（热身后）"><a href="#gateway（热身后）" class="headerlink" title="gateway（热身后）"></a>gateway（热身后）</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glhcigwj30sg0a876f.jpg" alt="image-20181120151631488"></p>
+<h3 id="linkerd（热身后）"><a href="#linkerd（热身后）" class="headerlink" title="linkerd（热身后）"></a>linkerd（热身后）</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gld5mgwj30tc0am0ux.jpg" alt="image-20181120151901127"></p>
+<h3 id="测试结果说明"><a href="#测试结果说明" class="headerlink" title="测试结果说明"></a>测试结果说明</h3><ol>
+<li>当没有网关，直接连接服务时，每秒可处理22433个请求，每个线程平均延时13.25ms</li>
+<li>使用Nginx代理时，每秒可处理12507个请求，约为直连时的56%，平均延时75.43ms</li>
+<li>使用热身后的zuul，每秒可处理6517个请求，约为直连时的29%，平均延时105.06ms；多次测试，偶尔会有几次存在3、4个timeout的请求。</li>
+<li>使用热身后的gateway，每秒可处理9228个请求，约为直连时的41%，平均延时为21.83ms</li>
+<li>使用热身后的linkerd，每秒可处理9999个请求，约为直连时的44%，平均延时为20.35ms</li>
+</ol>
+<h2 id="ab测试，针对http1-0"><a href="#ab测试，针对http1-0" class="headerlink" title="ab测试，针对http1.0"></a>ab测试，针对http1.0</h2><p>以下使用ab做200并发，50000个请求测试：</p>
+<h3 id="直连-1"><a href="#直连-1" class="headerlink" title="直连"></a>直连</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glfwxd6j30u0163gs2.jpg" alt="image-20181121101205314"></p>
+<h3 id="Nginx-1"><a href="#Nginx-1" class="headerlink" title="Nginx"></a>Nginx</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glk3lajj30u0196q96.jpg" alt="image-20181121101346153"></p>
+<h3 id="zuul-热身后"><a href="#zuul-热身后" class="headerlink" title="zuul(热身后)"></a>zuul(热身后)</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glbuwfkj30u01ar44o.jpg" alt="image-20181121101538843"></p>
+<h3 id="gateway（热身后）-1"><a href="#gateway（热身后）-1" class="headerlink" title="gateway（热身后）"></a>gateway（热身后）</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjqy4l7j30u01awn34.jpg" alt="image-20181121101844302"></p>
+<h3 id="linkerd-热身后"><a href="#linkerd-热身后" class="headerlink" title="linkerd(热身后)"></a>linkerd(热身后)</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjz07ahj30u016yn37.jpg" alt="image-20181121102151407"></p>
+<h3 id="测试结果说明-1"><a href="#测试结果说明-1" class="headerlink" title="测试结果说明"></a>测试结果说明</h3><p>针对网上有个帖子用ab测试，测试到gateway性能很差，官方已排查是ab用的是http1.0，而gateway的底层reactor-netty不支持http1.0，这个问题已修复。</p>
+<blockquote>
+<p><a href="https://cloud.tencent.com/developer/article/1083254" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1083254</a></p>
+<p><a href="https://github.com/reactor/reactor-netty/issues/21" target="_blank" rel="noopener">https://github.com/reactor/reactor-netty/issues/21</a></p>
+</blockquote>
+<ol>
+<li>直连，50000个请求，总耗时2.748秒，每秒处理18195个请求，平均11ms一个请求</li>
+<li>Nginx，总耗时5.021秒，每秒处理9958个请求，约为直连的55%，平均20ms一个请求</li>
+<li>热身后的zuul，总耗时7.862秒，每秒处理6360个请求，约为直连的35%，平均31ms一个请求</li>
+<li>热身后的gateway，总耗时6.762秒，每秒处理7394个请求，约为直连的41%，平均27ms一个请求</li>
+<li>热身后的linkerd，总耗时6.972秒，每秒处理7171个请求，约为直连的39%，平均28ms一个请求</li>
+</ol>
+<h2 id="简单总结"><a href="#简单总结" class="headerlink" title="简单总结"></a>简单总结</h2><ol>
+<li>根据测试情况，多种网关中Nginx的性能无疑是最好的，无论是淘宝的Tengine的功能增强，还是OpenResty的模块增强，都是对Nginx优化。不过从定位来说，我比较倾向于把它定位为传统的只是承载请求转发的工具，对于我们开发的技术栈没那么友好。另外，OpenResty有一个lua-resty-mysql模块，可做mysql的网关，我们没用过，不知道性能如何。</li>
+<li>zuul和gateway，都是可以无缝对接spring cloud，结合服务发现，对服务层来说可以做到屏蔽机器资源（ip或内外网域名等），服务对机器无依赖性。它们的定位是融合在微服务的网关，承载着对微服务增强的功能。对于二次开发的易用性来说，两者对我们开发上手都比较容易。</li>
+<li>zuul和gateway对比，根据测试情况，gateway的性能还是比zuul好很多的。另外，gateway的也有很多zuul没有的功能，比如支持http2、websocket，根据域名转发等。对于做服务转发，而不是数据库转发这种高性能要求，性能上和Nginx差距不大。</li>
+<li>linkerd则是服务网格的概念了，linkerd的原理是系统代理请求，对服务是无侵入性的，有比较成熟的监控管理界面。gateway的官方测试是，gateway性能比linkerd好很多，但是在我的虚拟机上测试，两者差不多。linkerd结合docker和k8s使用，对机器资源的抽象就更上一层。linkerd更像是应用程序或者说微服务间的 TCP/IP，网络监控、限流、熔断对服务层来说是透明无感的。</li>
+</ol>
+<p>以上，个人感觉是不同维度的东西，可以根据自己的功能需求、开发技术栈等，来选取对应的网关。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+
+	<div>    
+ 
+ 
+    <ul class="post-copyright">
+      <li class="post-copyright-author">
+          <strong>本文作者：</strong>二当家的
+      </li>
+      <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="/2018/12/16/网关选择困难症/" title="网关选择困难症">2018/12/16/网关选择困难症/</a>
+      </li>
+      <li class="post-copyright-license">
+        <strong>版权声明： </strong>
+        本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0 CN</a> 许可协议。转载请注明出处！
+      </li>
+	  <li class="post-copyright-license">
+         <strong>彩蛋： </strong>
+         左边Overview微信公众号二维码，扫描它获取更多技术信息
+       </li>
+    </ul>
+  
+</div>
+
+
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/网关/" rel="tag"># 网关</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div class="social_share">
+            
+            
+               <div id="needsharebutton-postbottom">
+                 <span class="btn">
+                    <i class="fa fa-share-alt" aria-hidden="true"></i>
+                 </span>
+               </div>
+            
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/15/你的httpclient真的使用正确吗/" rel="next" title="你的httpclient真的使用正确吗">
+                <i class="fa fa-chevron-left"></i> 你的httpclient真的使用正确吗
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/16/Java如何经得起时间的考验/" rel="prev" title="Java如何经得起时间的考验">
+                Java如何经得起时间的考验 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ggdy -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2680035919090213" data-ad-slot="4706082334" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img referrerPolicy="no-referrer" class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
+            
+              <p class="site-author-name" itemprop="name">二当家的</p>
+              <p class="site-description motion-element" itemprop="description">技术改变世界</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">43</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">29</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/gzlicanyi" title="GitHub &rarr; https://github.com/gzlicanyi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" title="微信公号 &rarr; https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>微信公号</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/er-dang-jia-de-hei-ban-bao/activities" title="知乎 &rarr; https://www.zhihu.com/people/er-dang-jia-de-hei-ban-bao/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.jianshu.com/u/bed603473c93" title="简书 &rarr; https://www.jianshu.com/u/bed603473c93" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>简书</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#测试机器"><span class="nav-number">1.</span> <span class="nav-text">测试机器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wrk测试"><span class="nav-number">2.</span> <span class="nav-text">wrk测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#直连"><span class="nav-number">2.1.</span> <span class="nav-text">直连</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx"><span class="nav-number">2.2.</span> <span class="nav-text">Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zuul（热身后），时不时有timeout的情况"><span class="nav-number">2.3.</span> <span class="nav-text">zuul（热身后），时不时有timeout的情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gateway（热身后）"><span class="nav-number">2.4.</span> <span class="nav-text">gateway（热身后）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linkerd（热身后）"><span class="nav-number">2.5.</span> <span class="nav-text">linkerd（热身后）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试结果说明"><span class="nav-number">2.6.</span> <span class="nav-text">测试结果说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ab测试，针对http1-0"><span class="nav-number">3.</span> <span class="nav-text">ab测试，针对http1.0</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#直连-1"><span class="nav-number">3.1.</span> <span class="nav-text">直连</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx-1"><span class="nav-number">3.2.</span> <span class="nav-text">Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zuul-热身后"><span class="nav-number">3.3.</span> <span class="nav-text">zuul(热身后)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gateway（热身后）-1"><span class="nav-number">3.4.</span> <span class="nav-text">gateway（热身后）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linkerd-热身后"><span class="nav-number">3.5.</span> <span class="nav-text">linkerd(热身后)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试结果说明-1"><span class="nav-number">3.6.</span> <span class="nav-text">测试结果说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单总结"><span class="nav-number">4.</span> <span class="nav-text">简单总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- sidecar -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2680035919090213" data-ad-slot="7645190536" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">二当家的</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="Symbols count total">246k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="Reading time total">3:44</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv" title="Total Visitors">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="site-pv" title="Total Views">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.6.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.6.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.6.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.6.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.6.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.6.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: true,
+        notify: true,
+        appId: 'yx078dulj2dUnlHnrhniBsyN-gzGzoHsz',
+        appKey: 'iXTbkfmqGigUmncpaWmCUf2J',
+        placeholder: '留言（左边Overview微信公众号二维码，关注并留言可快速回复）',
+        avatar:'mm',
+        meta:guest,
+        pageSize:'10' || 10,
+        visitor: false
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
