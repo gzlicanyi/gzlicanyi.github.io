@@ -601,7 +601,7 @@
 <p>RequestRateLimiter不支持捷径配置，如下面的配置是非法的</p>
 </blockquote>
 <p><strong>application.properties.</strong> </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># INVALID SHORTCUT CONFIGURATION</span><br><span class="line">spring.cloud.gateway.routes[0].filters[0]=RequestRateLimiter=2, 2, #&#123;@userkeyresolver&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># INVALID SHORTCUT CONFIGURATION</span></span><br><span class="line"><span class="meta">spring.cloud.gateway.routes[0].filters[0]</span>=<span class="string">RequestRateLimiter=2, 2, #&#123;@userkeyresolver&#125;</span></span><br></pre></td></tr></table></figure>
 
 <h5 id="8-1-Redis-RateLimiter"><a href="#8-1-Redis-RateLimiter" class="headerlink" title="8.1 Redis RateLimiter"></a>8.1 Redis RateLimiter</h5><p>基于 <a href="https://stripe.com/blog/rate-limiters" target="_blank" rel="noopener">Stripe</a>的redis实现方案，依赖<code>spring-boot-starter-data-redis-reactive</code>Spring Boot starter，使用的是令牌桶算法。</p>
 <p><code>redis-rate-limiter.replenishRate</code>配置的是每秒允许通过的请求数，其实就是令牌桶的填充速率。</p>
@@ -793,9 +793,9 @@
           
             <a href="/tags/java/" rel="tag"># java</a>
           
-            <a href="/tags/gateway/" rel="tag"># gateway</a>
-          
             <a href="/tags/spring/" rel="tag"># spring</a>
+          
+            <a href="/tags/gateway/" rel="tag"># gateway</a>
           
             <a href="/tags/spring-cloud-gateway/" rel="tag"># spring cloud gateway</a>
           
