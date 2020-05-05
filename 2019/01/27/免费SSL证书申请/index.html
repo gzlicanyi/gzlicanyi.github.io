@@ -129,12 +129,12 @@
 <meta property="og:site_name" content="二当家的黑板报">
 <meta property="og:description" content="什么是 Let’s EncryptLet’s Encrypt 是国外一个公共的免费 SSL 项目，由 Linux 基金会托管。它的来头不小，由 Mozilla、思科、Akamai、IdenTrust 和 EFF 等组织发起，目的就是向网站自动签发和管理免费证书。以便加速互联网由 HTTP 过渡到 HTTPS，目前 Facebook 等大公司开始加入赞助行列。 Let’s Encrypt 已经得了">
 <meta property="og:locale" content="zh">
-<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNc79gy1fzl4azu8boj30kj0mhn0j.jpg">
-<meta property="og:updated_time" content="2020-02-15T07:34:10.993Z">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1fzl4azu8boj30kj0mhn0j.jpg">
+<meta property="og:updated_time" content="2020-05-05T05:59:27.845Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="免费SSL证书申请">
 <meta name="twitter:description" content="什么是 Let’s EncryptLet’s Encrypt 是国外一个公共的免费 SSL 项目，由 Linux 基金会托管。它的来头不小，由 Mozilla、思科、Akamai、IdenTrust 和 EFF 等组织发起，目的就是向网站自动签发和管理免费证书。以便加速互联网由 HTTP 过渡到 HTTPS，目前 Facebook 等大公司开始加入赞助行列。 Let’s Encrypt 已经得了">
-<meta name="twitter:image" content="https://wx3.sinaimg.cn/large/006tNc79gy1fzl4azu8boj30kj0mhn0j.jpg">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1fzl4azu8boj30kj0mhn0j.jpg">
 
 
 
@@ -478,7 +478,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2020-02-15 15:34:10" itemprop="dateModified" datetime="2020-02-15T15:34:10+08:00">2020-02-15</time>
+                <time title="Modified: 2020-05-05 13:59:27" itemprop="dateModified" datetime="2020-05-05T13:59:27+08:00">2020-05-05</time>
               
             
           </span>
@@ -610,7 +610,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. certonly 表示插件，Certbot 有很多插件。不同的插件都可以申请证书，用户可以根据需要自行选择。</span><br><span class="line">2. -d 为哪些主机申请证书。如果是通配符，输入 *.xxx.com (根据实际情况替换为你自己的域名)。</span><br><span class="line">3. --preferred-challenges dns-01，使用 DNS 方式校验域名所有权。</span><br><span class="line">4. --server，Let&apos;s Encrypt ACME v2 版本使用的服务器不同于 v1 版本，需要显示指定。</span><br></pre></td></tr></table></figure>
 
 <p>执行完这一步之后，就是命令行的输出，请根据提示输入相应内容：</p>
-<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fzl4azu8boj30kj0mhn0j.jpg" alt></p>
+<p><img referrerPolicy="no-referrer" src="https://tva1.sinaimg.cn/large/006tNc79gy1fzl4azu8boj30kj0mhn0j.jpg" alt></p>
 <p>执行到上图最后一步时，先暂时不要回车。申请通配符证书是要经过 DNS 认证的，接下来需要按照提示在域名后台添加对应的 DNS TXT 记录。添加完成后，先输入以下命令确认 TXT 记录是否生效：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ dig  -t txt _acme-challenge.xxx.com @8.8.8.8    </span><br><span class="line">...</span><br><span class="line">;; OPT PSEUDOSECTION:</span><br><span class="line">; EDNS: version: 0, flags:; udp: 512</span><br><span class="line">;; QUESTION SECTION:</span><br><span class="line">;_acme-challenge.xxx.com.        IN      TXT</span><br><span class="line"></span><br><span class="line">;; ANSWER SECTION:</span><br><span class="line">_acme-challenge.xxx.com. 599 IN  TXT     <span class="string">"xxUHdwoZ6IaU_ab87h67rvbU2yJgdRyRe9zEA3jw"</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 
@@ -959,7 +959,7 @@
                   
                     
                   
-                  <a href="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" title="微信公号 &rarr; https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>微信公号</a>
+                  <a href="https://tva1.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" title="微信公号 &rarr; https://tva1.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>微信公号</a>
                 </span>
               
                 <span class="links-of-author-item">

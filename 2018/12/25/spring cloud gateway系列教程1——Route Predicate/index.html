@@ -129,12 +129,12 @@
 <meta property="og:site_name" content="二当家的黑板报">
 <meta property="og:description" content="spring cloud gateway系列教程目录 spring cloud gateway系列教程1—Route Predicate spring cloud gateway系列教程2——GatewayFilter_上篇 spring cloud gateway系列教程2——GatewayFilter_下篇 spring cloud gateway系列教程3—Global Filters sp">
 <meta property="og:locale" content="zh">
-<meta property="og:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fyi3an2v4wj30ds0got9a.jpg">
-<meta property="og:updated_time" content="2020-02-15T07:34:10.980Z">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fyi3an2v4wj30ds0got9a.jpg">
+<meta property="og:updated_time" content="2020-05-05T05:59:27.834Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="spring cloud gateway系列教程1—Route Predicate">
 <meta name="twitter:description" content="spring cloud gateway系列教程目录 spring cloud gateway系列教程1—Route Predicate spring cloud gateway系列教程2——GatewayFilter_上篇 spring cloud gateway系列教程2——GatewayFilter_下篇 spring cloud gateway系列教程3—Global Filters sp">
-<meta name="twitter:image" content="https://wx3.sinaimg.cn/large/006tNbRwgy1fyi3an2v4wj30ds0got9a.jpg">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fyi3an2v4wj30ds0got9a.jpg">
 
 
 
@@ -478,7 +478,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2020-02-15 15:34:10" itemprop="dateModified" datetime="2020-02-15T15:34:10+08:00">2020-02-15</time>
+                <time title="Modified: 2020-05-05 13:59:27" itemprop="dateModified" datetime="2020-05-05T13:59:27+08:00">2020-05-05</time>
               
             
           </span>
@@ -594,7 +594,7 @@
 
 <p>引入了依赖默认即开启gateway了，如果暂时不想使用这个功能，这可以配置<code>spring.cloud.gateway.enabled=false</code>即可。</p>
 <p><strong>Spring Cloud Gateway使用的是Spring Boot和Spring Webflux提供的Netty底层环境，不能和传统的Servlet容器一起使用，也不能打包成一个WAR包。</strong></p>
-<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fyi3an2v4wj30ds0got9a.jpg" alt></p>
+<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p><img referrerPolicy="no-referrer" src="https://tva1.sinaimg.cn/large/006tNbRwgy1fyi3an2v4wj30ds0got9a.jpg" alt></p>
 <p>当客户端发送请求到Spring Cloud Gateway，Gateway Handler Mapping会匹配Route映射分发到Gateway Web Handler。handler会将请求经过一系列的filter处理，代理请求前，会执行左右的”pre” filter逻辑，代理请求后，会执行所有”post” filter逻辑。</p>
 <h3 id="Route-Predicate-Factories"><a href="#Route-Predicate-Factories" class="headerlink" title="Route Predicate Factories"></a>Route Predicate Factories</h3><p>Spring Cloud Gateway是使用Spring WebFlux的HandlerMapping作为匹配路由底层实现，本身已自带很多Route Predicate Factories，分别匹配不同的http请求属性，多个Route Predicate Factories也可以通过<code>and</code>进行逻辑合并匹配。</p>
 <h4 id="1-After-Route-Predicate-Factory"><a href="#1-After-Route-Predicate-Factory" class="headerlink" title="1. After Route Predicate Factory"></a>1. After Route Predicate Factory</h4><p>After Route Predicate Factory使用的是时间作为匹配规则，只要当前时间大于设定时间，路由才会匹配请求。<br><strong>application.yml</strong>：</p>
@@ -979,7 +979,7 @@
                   
                     
                   
-                  <a href="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" title="微信公号 &rarr; https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>微信公号</a>
+                  <a href="https://tva1.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" title="微信公号 &rarr; https://tva1.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>微信公号</a>
                 </span>
               
                 <span class="links-of-author-item">

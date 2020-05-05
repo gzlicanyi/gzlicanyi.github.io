@@ -129,12 +129,12 @@
 <meta property="og:site_name" content="二当家的黑板报">
 <meta property="og:description" content="反应式编程一开始是从前端和客户端开始兴起，现在大有蔓延到后端的趋势，Spring5推出的webflux就是反应式编程的产物。 webflux对比于springMVC，性能高出很多，网上已经有很多的测评，不再在过多说明。  上图看出对比于同步，异步所用的线程是比较少的，不过有个前提是，程序逻辑中有阻塞（如io阻塞等），且这种阻塞是可以异步化的。 为了满足这个前提，反应式编程框架就必须将这些阻塞变成异">
 <meta property="og:locale" content="zh">
-<meta property="og:image" content="https://ww1.sinaimg.cn/large/006tNc79gy1g5flr45v57j313y0lawlw.jpg">
-<meta property="og:updated_time" content="2020-02-15T07:34:10.992Z">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5flr45v57j313y0lawlw.jpg">
+<meta property="og:updated_time" content="2020-05-05T05:59:27.844Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="webflux的delay原理详解">
 <meta name="twitter:description" content="反应式编程一开始是从前端和客户端开始兴起，现在大有蔓延到后端的趋势，Spring5推出的webflux就是反应式编程的产物。 webflux对比于springMVC，性能高出很多，网上已经有很多的测评，不再在过多说明。  上图看出对比于同步，异步所用的线程是比较少的，不过有个前提是，程序逻辑中有阻塞（如io阻塞等），且这种阻塞是可以异步化的。 为了满足这个前提，反应式编程框架就必须将这些阻塞变成异">
-<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/006tNc79gy1g5flr45v57j313y0lawlw.jpg">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5flr45v57j313y0lawlw.jpg">
 
 
 
@@ -478,7 +478,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2020-02-15 15:34:10" itemprop="dateModified" datetime="2020-02-15T15:34:10+08:00">2020-02-15</time>
+                <time title="Modified: 2020-05-05 13:59:27" itemprop="dateModified" datetime="2020-05-05T13:59:27+08:00">2020-05-05</time>
               
             
           </span>
@@ -584,7 +584,7 @@
 
         <p>反应式编程一开始是从前端和客户端开始兴起，现在大有蔓延到后端的趋势，Spring5推出的webflux就是反应式编程的产物。</p>
 <p>webflux对比于springMVC，性能高出很多，网上已经有很多的测评，不再在过多说明。</p>
-<p><img referrerPolicy="no-referrer" src="https://ww1.sinaimg.cn/large/006tNc79gy1g5flr45v57j313y0lawlw.jpg" alt="左图同步，右图异步"></p>
+<p><img referrerPolicy="no-referrer" src="https://tva1.sinaimg.cn/large/006tNc79gy1g5flr45v57j313y0lawlw.jpg" alt="左图同步，右图异步"></p>
 <p>上图看出对比于同步，异步所用的线程是比较少的，不过有个前提是，程序逻辑中有阻塞（如io阻塞等），且这种阻塞是可以异步化的。</p>
 <p>为了满足这个前提，反应式编程框架就必须将这些阻塞变成异步化，如新出的<code>WebClient</code>工具就是将http请求io异步化。</p>
 <p><code>delay</code>方法就是用来代替<code>sleep</code>方法的，下面来讲解一下<code>delay</code>方法是怎么将延时异步化的。</p>
@@ -930,7 +930,7 @@
                   
                     
                   
-                  <a href="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" title="微信公号 &rarr; https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>微信公号</a>
+                  <a href="https://tva1.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" title="微信公号 &rarr; https://tva1.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>微信公号</a>
                 </span>
               
                 <span class="links-of-author-item">
