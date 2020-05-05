@@ -584,7 +584,7 @@
 
         <p>反应式编程一开始是从前端和客户端开始兴起，现在大有蔓延到后端的趋势，Spring5推出的webflux就是反应式编程的产物。</p>
 <p>webflux对比于springMVC，性能高出很多，网上已经有很多的测评，不再在过多说明。</p>
-<p><img referrerPolicy="no-referrer" src="https://ww1.sinaimg.cn/large/006tNc79gy1g5flr45v57j313y0lawlw.jpg" alt="左图同步，右图异步"></p>
+<p><img src="https://ww1.sinaimg.cn/large/006tNc79gy1g5flr45v57j313y0lawlw.jpg" alt="左图同步，右图异步"></p>
 <p>上图看出对比于同步，异步所用的线程是比较少的，不过有个前提是，程序逻辑中有阻塞（如io阻塞等），且这种阻塞是可以异步化的。</p>
 <p>为了满足这个前提，反应式编程框架就必须将这些阻塞变成异步化，如新出的<code>WebClient</code>工具就是将http请求io异步化。</p>
 <p><code>delay</code>方法就是用来代替<code>sleep</code>方法的，下面来讲解一下<code>delay</code>方法是怎么将延时异步化的。</p>
@@ -775,7 +775,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img referrerPolicy="no-referrer" class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
+              <img class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
             
               <p class="site-author-name" itemprop="name">二当家的</p>
               <p class="site-description motion-element" itemprop="description">技术改变世界</p>

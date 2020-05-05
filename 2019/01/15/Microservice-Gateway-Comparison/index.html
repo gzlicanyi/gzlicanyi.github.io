@@ -593,14 +593,14 @@
 </script>
 
         <p>Recently, due to the needs of new projects, the technology stack selected by our back-end is spring cloud micro-service, which needs to be selected for the gateway, so we have the performance test analysis of this variety of gateways.</p>
-<h2 id="Testing-Machine"><a href="#Testing-Machine" class="headerlink" title="Testing Machine"></a>Testing Machine</h2><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gkfxa6oj30iw0boacs.jpg" alt="image-20181121104328341"></p>
+<h2 id="Testing-Machine"><a href="#Testing-Machine" class="headerlink" title="Testing Machine"></a>Testing Machine</h2><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gkfxa6oj30iw0boacs.jpg" alt="image-20181121104328341"></p>
 <p>Using a 4-core 4G memory virtual machine, the system is Ubuntu18</p>
 <h2 id="Wrk-test"><a href="#Wrk-test" class="headerlink" title="Wrk test"></a>Wrk test</h2><p>The following are 10 threads, 200 concurrent, lasting 30 seconds, test results for different gateways. (wrk uses the http1.1 version)</p>
-<h3 id="Direct-connection"><a href="#Direct-connection" class="headerlink" title="Direct connection"></a>Direct connection</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl5o1ozj30tk09umz9.jpg" alt="image-20181120151113284"></p>
-<h3 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl4ab7hj30t409yq4y.jpg" alt="image-20181120151226801"></p>
-<h3 id="zuul（After-warming-up），Timeout-situation-from-time-to-time"><a href="#zuul（After-warming-up），Timeout-situation-from-time-to-time" class="headerlink" title="zuul（After warming up），Timeout situation from time to time"></a>zuul（After warming up），Timeout situation from time to time</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl72bsej30t20acac7.jpg" alt="image-20181120151329457"></p>
-<h3 id="gateway（After-warming-up）"><a href="#gateway（After-warming-up）" class="headerlink" title="gateway（After warming up）"></a>gateway（After warming up）</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glhcigwj30sg0a876f.jpg" alt="image-20181120151631488"></p>
-<h3 id="linkerd（After-warming-up）"><a href="#linkerd（After-warming-up）" class="headerlink" title="linkerd（After warming up）"></a>linkerd（After warming up）</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gld5mgwj30tc0am0ux.jpg" alt="image-20181120151901127"></p>
+<h3 id="Direct-connection"><a href="#Direct-connection" class="headerlink" title="Direct connection"></a>Direct connection</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl5o1ozj30tk09umz9.jpg" alt="image-20181120151113284"></p>
+<h3 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl4ab7hj30t409yq4y.jpg" alt="image-20181120151226801"></p>
+<h3 id="zuul（After-warming-up），Timeout-situation-from-time-to-time"><a href="#zuul（After-warming-up），Timeout-situation-from-time-to-time" class="headerlink" title="zuul（After warming up），Timeout situation from time to time"></a>zuul（After warming up），Timeout situation from time to time</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl72bsej30t20acac7.jpg" alt="image-20181120151329457"></p>
+<h3 id="gateway（After-warming-up）"><a href="#gateway（After-warming-up）" class="headerlink" title="gateway（After warming up）"></a>gateway（After warming up）</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glhcigwj30sg0a876f.jpg" alt="image-20181120151631488"></p>
+<h3 id="linkerd（After-warming-up）"><a href="#linkerd（After-warming-up）" class="headerlink" title="linkerd（After warming up）"></a>linkerd（After warming up）</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gld5mgwj30tc0am0ux.jpg" alt="image-20181120151901127"></p>
 <h3 id="Test-result-analysis"><a href="#Test-result-analysis" class="headerlink" title="Test result analysis"></a>Test result analysis</h3><ol>
 <li>When there is no gateway and directly connect to the service, 22,433 requests can be processed per second, and the average delay of each thread is 13.25ms.</li>
 <li>When using the Nginx proxy, it can process 12507 requests per second, which is about 56% of the direct connection, with an average delay of 75.43ms.</li>
@@ -609,11 +609,11 @@
 <li>Using the linkerd after warm-up, it can process 9999 requests per second, which is about 44% of the direct connection, and the average delay is 20.35ms.</li>
 </ol>
 <h2 id="Ab-test-for-http1-0"><a href="#Ab-test-for-http1-0" class="headerlink" title="Ab test for http1.0"></a>Ab test for http1.0</h2><p>The following uses ab to do 200 concurrency, 50,000 request tests:</p>
-<h3 id="Direct-connection-1"><a href="#Direct-connection-1" class="headerlink" title="Direct connection"></a>Direct connection</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glfwxd6j30u0163gs2.jpg" alt="image-20181121101205314"></p>
-<h3 id="Nginx-1"><a href="#Nginx-1" class="headerlink" title="Nginx"></a>Nginx</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glk3lajj30u0196q96.jpg" alt="image-20181121101346153"></p>
-<h3 id="zuul-After-warming-up"><a href="#zuul-After-warming-up" class="headerlink" title="zuul(After warming up)"></a>zuul(After warming up)</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glbuwfkj30u01ar44o.jpg" alt="image-20181121101538843"></p>
-<h3 id="gateway（After-warming-up）-1"><a href="#gateway（After-warming-up）-1" class="headerlink" title="gateway（After warming up）"></a>gateway（After warming up）</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjqy4l7j30u01awn34.jpg" alt="image-20181121101844302"></p>
-<h3 id="linkerd-After-warming-up"><a href="#linkerd-After-warming-up" class="headerlink" title="linkerd(After warming up)"></a>linkerd(After warming up)</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjz07ahj30u016yn37.jpg" alt="image-20181121102151407"></p>
+<h3 id="Direct-connection-1"><a href="#Direct-connection-1" class="headerlink" title="Direct connection"></a>Direct connection</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glfwxd6j30u0163gs2.jpg" alt="image-20181121101205314"></p>
+<h3 id="Nginx-1"><a href="#Nginx-1" class="headerlink" title="Nginx"></a>Nginx</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glk3lajj30u0196q96.jpg" alt="image-20181121101346153"></p>
+<h3 id="zuul-After-warming-up"><a href="#zuul-After-warming-up" class="headerlink" title="zuul(After warming up)"></a>zuul(After warming up)</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glbuwfkj30u01ar44o.jpg" alt="image-20181121101538843"></p>
+<h3 id="gateway（After-warming-up）-1"><a href="#gateway（After-warming-up）-1" class="headerlink" title="gateway（After warming up）"></a>gateway（After warming up）</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjqy4l7j30u01awn34.jpg" alt="image-20181121101844302"></p>
+<h3 id="linkerd-After-warming-up"><a href="#linkerd-After-warming-up" class="headerlink" title="linkerd(After warming up)"></a>linkerd(After warming up)</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjz07ahj30u016yn37.jpg" alt="image-20181121102151407"></p>
 <h3 id="Test-result-analysis-1"><a href="#Test-result-analysis-1" class="headerlink" title="Test result analysis"></a>Test result analysis</h3><p>There is a post on the Internet with ab test, the test to the gateway performance is very poor, the official has been checked is ab used http1.0, and the bottom layer reactor-netty does not support http1.0, this problem has been fixed.</p>
 <blockquote>
 <p><a href="https://cloud.tencent.com/developer/article/1083254" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1083254</a></p>
@@ -801,7 +801,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img referrerPolicy="no-referrer" class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
+              <img class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
             
               <p class="site-author-name" itemprop="name">二当家的</p>
               <p class="site-description motion-element" itemprop="description">技术改变世界</p>

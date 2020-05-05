@@ -591,22 +591,22 @@
 <p>转自：开源中国（属于又想骗我升级系列文章，哈哈）</p>
 </blockquote>
 <p>OptaPlanner 官网发布了一个 <a href="https://www.optaplanner.org/blog/2019/01/17/HowMuchFasterIsJava11.html" target="_blank" rel="noopener">Java 11 GC 性能基准测试报告</a>。</p>
-<p><img referrerPolicy="no-referrer" src="https://static.oschina.net/uploads/space/2018/0926/062301_mTtL_2720166.jpeg" alt="img"></p>
+<p><img src="https://static.oschina.net/uploads/space/2018/0926/062301_mTtL_2720166.jpeg" alt="img"></p>
 <p>当前使用量最大的 Java 版本是 8，所以测试者用 Java 8 与 Java 11 进行对比测试。GC 是影响 Java 性能的关键因素，所以测试自然也基于 GC，在 G1 GC 和并行 GC 下分别进行了测试，结果如下：</p>
 <p><strong>Java 8 vs. Java 11</strong></p>
 <p><strong>使用 G1 GC</strong></p>
-<p><img referrerPolicy="no-referrer" src="https://oscimg.oschina.net/oscnet/8d0352da521f4c9d526aa3bbd4c85010d6f.jpg" alt="img"></p>
+<p><img src="https://oscimg.oschina.net/oscnet/8d0352da521f4c9d526aa3bbd4c85010d6f.jpg" alt="img"></p>
 <p>G1 GC 下每秒分值：</p>
-<p><img referrerPolicy="no-referrer" src="https://oscimg.oschina.net/oscnet/208a01fe591ca37fcb97b515463901fe5ad.jpg" alt="img"></p>
+<p><img src="https://oscimg.oschina.net/oscnet/208a01fe591ca37fcb97b515463901fe5ad.jpg" alt="img"></p>
 <p>Java 11 在几乎所有测试数据集上都有速度上的提升。平均而言，仅通过切换到 Java 11 就有 16％ 的改进，这种改进可能是因为 Java 10 中引入了 <a href="http://openjdk.java.net/jeps/307" target="_blank" rel="noopener">JEP 307: Parallel Full GC for G1</a>。</p>
 <p><strong>使用并行 GC</strong></p>
-<p><img referrerPolicy="no-referrer" src="https://oscimg.oschina.net/oscnet/58815db424b1029cd8cceb3283c1863f80d.jpg" alt="img"></p>
+<p><img src="https://oscimg.oschina.net/oscnet/58815db424b1029cd8cceb3283c1863f80d.jpg" alt="img"></p>
 <p>并行 GC 下每秒分值：</p>
-<p><img referrerPolicy="no-referrer" src="https://oscimg.oschina.net/oscnet/17101188ae2e1e508076874587d1eb1447c.jpg" alt="img"></p>
+<p><img src="https://oscimg.oschina.net/oscnet/17101188ae2e1e508076874587d1eb1447c.jpg" alt="img"></p>
 <p>使用并行 GC，结果不如 G1，某些数据集上有所改进，但其它数据集保持不变甚至出现性能下降。平均而言，Java 11 的性能提升了 4％ 以上。</p>
 <p>测试者还在 Java 11 上对并行 GC 与 G1 GC 进行对比：</p>
 <p><strong>Java 11 上并行 GC vs. G1 GC</strong></p>
-<p><img referrerPolicy="no-referrer" src="https://oscimg.oschina.net/oscnet/b530985c5f7af7c870a59d34787b4c7d787.jpg" alt="img"></p>
+<p><img src="https://oscimg.oschina.net/oscnet/b530985c5f7af7c870a59d34787b4c7d787.jpg" alt="img"></p>
 <p>结果表明 G1 GC 整体上不如并行 GC。</p>
 <p>OptaPlanner 表示，从 Java 8 到 Java 11，G1 GC 的平均速度改进为 16.1％，并行 GC 为 4.5％。此外虽然并行 GC 面向吞吐量，而 G1 则侧重于低延迟 GC，但是 Java 11 中带来的 G1 显著改进，使得将两者进行直接比较是有意义的。此外，基于基准测试中的大多数数据集来看，并行 GC 还是更适合 OptaPlanner 的，因为吞吐量对于解决 OptaPlanner 的优化问题更为重要。</p>
 <p>详细测试基准与过程查看原文：</p>
@@ -769,7 +769,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img referrerPolicy="no-referrer" class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
+              <img class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
             
               <p class="site-author-name" itemprop="name">二当家的</p>
               <p class="site-description motion-element" itemprop="description">技术改变世界</p>

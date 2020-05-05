@@ -593,14 +593,14 @@
 </script>
 
         <p>近期因为新项目需要，我们的后端选用的技术栈是spring cloud微服务，需要对网关进行选型，所以有了一下这篇网关的性能测试分析，对你有帮助的，关注一下公众号：<code>二当家的黑板报</code>。</p>
-<h2 id="测试机器"><a href="#测试机器" class="headerlink" title="测试机器"></a>测试机器</h2><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gkfxa6oj30iw0boacs.jpg" alt="image-20181121104328341"></p>
+<h2 id="测试机器"><a href="#测试机器" class="headerlink" title="测试机器"></a>测试机器</h2><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gkfxa6oj30iw0boacs.jpg" alt="image-20181121104328341"></p>
 <p> 使用的是4核4G内存的虚拟机，系统是Ubuntu18</p>
 <h2 id="wrk测试"><a href="#wrk测试" class="headerlink" title="wrk测试"></a>wrk测试</h2><p>以下为10个线程，200并发，持续30秒，对不同网关的测试结果。（wrk使用的是http1.1版本）</p>
-<h3 id="直连"><a href="#直连" class="headerlink" title="直连"></a>直连</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl5o1ozj30tk09umz9.jpg" alt="image-20181120151113284"></p>
-<h3 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl4ab7hj30t409yq4y.jpg" alt="image-20181120151226801"></p>
-<h3 id="zuul（热身后），时不时有timeout的情况"><a href="#zuul（热身后），时不时有timeout的情况" class="headerlink" title="zuul（热身后），时不时有timeout的情况"></a>zuul（热身后），时不时有timeout的情况</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl72bsej30t20acac7.jpg" alt="image-20181120151329457"></p>
-<h3 id="gateway（热身后）"><a href="#gateway（热身后）" class="headerlink" title="gateway（热身后）"></a>gateway（热身后）</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glhcigwj30sg0a876f.jpg" alt="image-20181120151631488"></p>
-<h3 id="linkerd（热身后）"><a href="#linkerd（热身后）" class="headerlink" title="linkerd（热身后）"></a>linkerd（热身后）</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gld5mgwj30tc0am0ux.jpg" alt="image-20181120151901127"></p>
+<h3 id="直连"><a href="#直连" class="headerlink" title="直连"></a>直连</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl5o1ozj30tk09umz9.jpg" alt="image-20181120151113284"></p>
+<h3 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl4ab7hj30t409yq4y.jpg" alt="image-20181120151226801"></p>
+<h3 id="zuul（热身后），时不时有timeout的情况"><a href="#zuul（热身后），时不时有timeout的情况" class="headerlink" title="zuul（热身后），时不时有timeout的情况"></a>zuul（热身后），时不时有timeout的情况</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gl72bsej30t20acac7.jpg" alt="image-20181120151329457"></p>
+<h3 id="gateway（热身后）"><a href="#gateway（热身后）" class="headerlink" title="gateway（热身后）"></a>gateway（热身后）</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glhcigwj30sg0a876f.jpg" alt="image-20181120151631488"></p>
+<h3 id="linkerd（热身后）"><a href="#linkerd（热身后）" class="headerlink" title="linkerd（热身后）"></a>linkerd（热身后）</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8gld5mgwj30tc0am0ux.jpg" alt="image-20181120151901127"></p>
 <h3 id="测试结果说明"><a href="#测试结果说明" class="headerlink" title="测试结果说明"></a>测试结果说明</h3><ol>
 <li>当没有网关，直接连接服务时，每秒可处理22433个请求，每个线程平均延时13.25ms</li>
 <li>使用Nginx代理时，每秒可处理12507个请求，约为直连时的56%，平均延时75.43ms</li>
@@ -609,11 +609,11 @@
 <li>使用热身后的linkerd，每秒可处理9999个请求，约为直连时的44%，平均延时为20.35ms</li>
 </ol>
 <h2 id="ab测试，针对http1-0"><a href="#ab测试，针对http1-0" class="headerlink" title="ab测试，针对http1.0"></a>ab测试，针对http1.0</h2><p>以下使用ab做200并发，50000个请求测试：</p>
-<h3 id="直连-1"><a href="#直连-1" class="headerlink" title="直连"></a>直连</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glfwxd6j30u0163gs2.jpg" alt="image-20181121101205314"></p>
-<h3 id="Nginx-1"><a href="#Nginx-1" class="headerlink" title="Nginx"></a>Nginx</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glk3lajj30u0196q96.jpg" alt="image-20181121101346153"></p>
-<h3 id="zuul-热身后"><a href="#zuul-热身后" class="headerlink" title="zuul(热身后)"></a>zuul(热身后)</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glbuwfkj30u01ar44o.jpg" alt="image-20181121101538843"></p>
-<h3 id="gateway（热身后）-1"><a href="#gateway（热身后）-1" class="headerlink" title="gateway（热身后）"></a>gateway（热身后）</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjqy4l7j30u01awn34.jpg" alt="image-20181121101844302"></p>
-<h3 id="linkerd-热身后"><a href="#linkerd-热身后" class="headerlink" title="linkerd(热身后)"></a>linkerd(热身后)</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjz07ahj30u016yn37.jpg" alt="image-20181121102151407"></p>
+<h3 id="直连-1"><a href="#直连-1" class="headerlink" title="直连"></a>直连</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glfwxd6j30u0163gs2.jpg" alt="image-20181121101205314"></p>
+<h3 id="Nginx-1"><a href="#Nginx-1" class="headerlink" title="Nginx"></a>Nginx</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glk3lajj30u0196q96.jpg" alt="image-20181121101346153"></p>
+<h3 id="zuul-热身后"><a href="#zuul-热身后" class="headerlink" title="zuul(热身后)"></a>zuul(热身后)</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8glbuwfkj30u01ar44o.jpg" alt="image-20181121101538843"></p>
+<h3 id="gateway（热身后）-1"><a href="#gateway（热身后）-1" class="headerlink" title="gateway（热身后）"></a>gateway（热身后）</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjqy4l7j30u01awn34.jpg" alt="image-20181121101844302"></p>
+<h3 id="linkerd-热身后"><a href="#linkerd-热身后" class="headerlink" title="linkerd(热身后)"></a>linkerd(热身后)</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy8hjz07ahj30u016yn37.jpg" alt="image-20181121102151407"></p>
 <h3 id="测试结果说明-1"><a href="#测试结果说明-1" class="headerlink" title="测试结果说明"></a>测试结果说明</h3><p>针对网上有个帖子用ab测试，测试到gateway性能很差，官方已排查是ab用的是http1.0，而gateway的底层reactor-netty不支持http1.0，这个问题已修复。</p>
 <blockquote>
 <p><a href="https://cloud.tencent.com/developer/article/1083254" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1083254</a></p>
@@ -798,7 +798,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img referrerPolicy="no-referrer" class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
+              <img class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
             
               <p class="site-author-name" itemprop="name">二当家的</p>
               <p class="site-description motion-element" itemprop="description">技术改变世界</p>

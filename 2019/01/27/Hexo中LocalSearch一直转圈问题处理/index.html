@@ -586,14 +586,14 @@
 </script>
 
         <p>最近使用hexo的localsearch，发现点击搜索一直load不出来，一开始还以为是网络问题，试多了几次发现还是一样，我的文章不多，localsearch的性能不至于这样吧。</p>
-<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fzl52mc78ej31hy0u0473.jpg" alt></p>
+<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fzl52mc78ej31hy0u0473.jpg" alt></p>
 <p>网上搜索发现是非法字符的问题，用sublime打开发现多了以下红框的字符：</p>
-<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fzl5eltkg4j30na02kt8z.jpg" alt></p>
+<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fzl5eltkg4j30na02kt8z.jpg" alt></p>
 <p>我们知道localsearch会最终生成一份search.xml文件，用sublime打开查看发现：</p>
-<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fzl5gaffpdj30ng01qmxo.jpg" alt="image-20190127145736986"></p>
+<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fzl5gaffpdj30ng01qmxo.jpg" alt="image-20190127145736986"></p>
 <p>XML中多了这些字符，就会解析出错，所以就一直load不出来。</p>
 <p>删掉这些字符就可以解决问题了，如下：</p>
-<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fzl5k9y32dj31ie0iwtck.jpg" alt></p>
+<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fzl5k9y32dj31ie0iwtck.jpg" alt></p>
 
       
     </div>
@@ -752,7 +752,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img referrerPolicy="no-referrer" class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
+              <img class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
             
               <p class="site-author-name" itemprop="name">二当家的</p>
               <p class="site-description motion-element" itemprop="description">技术改变世界</p>
