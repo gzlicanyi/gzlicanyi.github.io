@@ -594,7 +594,7 @@
 
 <p>引入了依赖默认即开启gateway了，如果暂时不想使用这个功能，这可以配置<code>spring.cloud.gateway.enabled=false</code>即可。</p>
 <p><strong>Spring Cloud Gateway使用的是Spring Boot和Spring Webflux提供的Netty底层环境，不能和传统的Servlet容器一起使用，也不能打包成一个WAR包。</strong></p>
-<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p><img src="https://wx3.sinaimg.cn/large/006tNbRwgy1fyi3an2v4wj30ds0got9a.jpg" alt></p>
+<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fyi3an2v4wj30ds0got9a.jpg" alt></p>
 <p>当客户端发送请求到Spring Cloud Gateway，Gateway Handler Mapping会匹配Route映射分发到Gateway Web Handler。handler会将请求经过一系列的filter处理，代理请求前，会执行左右的”pre” filter逻辑，代理请求后，会执行所有”post” filter逻辑。</p>
 <h3 id="Route-Predicate-Factories"><a href="#Route-Predicate-Factories" class="headerlink" title="Route Predicate Factories"></a>Route Predicate Factories</h3><p>Spring Cloud Gateway是使用Spring WebFlux的HandlerMapping作为匹配路由底层实现，本身已自带很多Route Predicate Factories，分别匹配不同的http请求属性，多个Route Predicate Factories也可以通过<code>and</code>进行逻辑合并匹配。</p>
 <h4 id="1-After-Route-Predicate-Factory"><a href="#1-After-Route-Predicate-Factory" class="headerlink" title="1. After Route Predicate Factory"></a>1. After Route Predicate Factory</h4><p>After Route Predicate Factory使用的是时间作为匹配规则，只要当前时间大于设定时间，路由才会匹配请求。<br><strong>application.yml</strong>：</p>
@@ -824,7 +824,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
+              <img referrerPolicy="no-referrer" class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
             
               <p class="site-author-name" itemprop="name">二当家的</p>
               <p class="site-description motion-element" itemprop="description">技术改变世界</p>

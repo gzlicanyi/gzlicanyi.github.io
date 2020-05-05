@@ -597,7 +597,7 @@
 <table><tbody><tr><td colspan="3" align="center" border="0">Stream操作分类</td></tr><tr><td rowspan="2" border="1">中间操作(Intermediate operations)</td><td>无状态(Stateless)</td><td>unordered() filter() map() mapToInt() mapToLong() mapToDouble() flatMap() flatMapToInt() flatMapToLong() flatMapToDouble() peek()</td></tr><tr><td>有状态(Stateful)</td><td>distinct() sorted() sorted() limit() skip() </td></tr><tr><td rowspan="2" border="1">结束操作(Terminal operations)</td><td>非短路操作</td><td>forEach() forEachOrdered() toArray() reduce() collect() max() min() count()</td></tr><tr><td>短路操作(short-circuiting)</td><td>anyMatch() allMatch() noneMatch() findFirst() findAny()</td></tr></tbody></table>
 
 <p>Stream上的所有操作分为两类：中间操作和结束操作，中间操作只是一种标记，只有结束操作才会触发实际计算。中间操作又可以分为无状态的(<em>Stateless</em>)和有状态的(<em>Stateful</em>)，无状态中间操作是指元素的处理不受前面元素的影响，而有状态的中间操作必须等到所有元素处理之后才知道最终结果，比如排序是有状态操作，在读取所有元素之前并不能确定排序结果；结束操作又可以分为短路操作和非短路操作，短路操作是指不用处理全部元素就可以返回结果，比如<em>找到第一个满足条件的元素</em>。之所以要进行如此精细的划分，是因为底层对每一种情况的处理方式不同。</p>
-<h2 id="一种直白的实现方式"><a href="#一种直白的实现方式" class="headerlink" title="一种直白的实现方式"></a>一种直白的实现方式</h2><p><img src="https://wx3.sinaimg.cn/large/006tKfTcgy1g0gq7olvdpj30rs0g2t9f.jpg" alt="Stream_pipeline_naive"></p>
+<h2 id="一种直白的实现方式"><a href="#一种直白的实现方式" class="headerlink" title="一种直白的实现方式"></a>一种直白的实现方式</h2><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tKfTcgy1g0gq7olvdpj30rs0g2t9f.jpg" alt="Stream_pipeline_naive"></p>
 <p>仍然考虑上述求最长字符串的程序，一种直白的流水线实现方式是为每一次函数调用都执一次迭代，并将处理中间结果放到某种数据结构中（比如数组，容器等）。具体说来，就是调用<code>filter()</code>方法后立即执行，选出所有以<em>A</em>开头的字符串并放到一个列表list1中，之后让list1传递给<code>mapToInt()</code>方法并立即执行，生成的结果放到list2中，最后遍历list2找出最大的数字作为最终结果。程序的执行流程如如所示：</p>
 <p>这样做实现起来非常简单直观，但有两个明显的弊端：</p>
 <ol>
@@ -615,11 +615,11 @@
 <li>叠加之后的操作如何执行？</li>
 <li>执行后的结果（如果有）在哪里？</li>
 </ol>
-<h3 id="操作如何记录"><a href="#操作如何记录" class="headerlink" title="操作如何记录"></a>操作如何记录</h3><p><img src="https://wx3.sinaimg.cn/large/006tKfTcgy1g0gq7pqxn4j30rs0i1my5.jpg" alt="Java_stream_pipeline_classes"></p>
+<h3 id="操作如何记录"><a href="#操作如何记录" class="headerlink" title="操作如何记录"></a>操作如何记录</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tKfTcgy1g0gq7pqxn4j30rs0i1my5.jpg" alt="Java_stream_pipeline_classes"></p>
 <p>注意这里使用的是“<em>操作(operation)<em>”一词，指的是“Stream中间操作”的操作，很多Stream操作会需要一个回调函数（Lambda表达式），因此一个完整的操作是&lt;</em>数据来源，操作，回调函数</em>&gt;构成的三元组。Stream中使用Stage的概念来描述一个完整的操作，并用某种实例化后的<em>PipelineHelper</em>来代表Stage，将具有先后顺序的各个Stage连到一起，就构成了整个流水线。跟Stream相关类和接口的继承关系图示。</p>
 <p>还有<em>IntPipeline, LongPipeline, DoublePipeline</em>没在图中画出，这三个类专门为三种基本类型（不是包装类型）而定制的，跟<em>ReferencePipeline</em>是并列关系。图中<em>Head</em>用于表示第一个Stage，即调用调用诸如<em>Collection.stream()</em>方法产生的Stage，很显然这个Stage里不包含任何操作；<em>StatelessOp</em>和<em>StatefulOp</em>分别表示无状态和有状态的Stage，对应于无状态和有状态的中间操作。</p>
 <p>Stream流水线组织结构示意图如下：</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tKfTcgy1g0gq7qggwij30rs07d750.jpg" alt="Stream_pipeline_example"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tKfTcgy1g0gq7qggwij30rs07d750.jpg" alt="Stream_pipeline_example"></p>
 <p>图中通过<code>Collection.stream()</code>方法得到<em>Head</em>也就是stage0，紧接着调用一系列的中间操作，不断产生新的Stream。<strong>这些Stream对象以双向链表的形式组织在一起，构成整个流水线，由于每个Stage都记录了前一个Stage和本次的操作以及回调函数，依靠这种结构就能建立起对数据源的所有操作</strong>。这就是Stream记录操作的方式。</p>
 <h3 id="操作如何叠加"><a href="#操作如何叠加" class="headerlink" title="操作如何叠加"></a>操作如何叠加</h3><p>以上只是解决了操作记录的问题，要想让流水线起到应有的作用我们需要一种将所有操作叠加到一起的方案。你可能会觉得这很简单，只需要从流水线的head开始依次执行每一步的操作（包括回调函数）就行了。这听起来似乎是可行的，但是你忽略了前面的Stage并不知道后面Stage到底执行了哪种操作，以及回调函数是哪种形式。换句话说，只有当前Stage本身才知道该如何执行自己包含的动作。这就需要有某种协议来协调相邻Stage之间的调用关系。</p>
 <p>这种协议由<em>Sink</em>接口完成，<em>Sink</em>接口包含的方法如下表所示：</p>
@@ -665,7 +665,7 @@
 <li>最后end()方法告诉Sink所有元素遍历完毕，启动排序步骤，排序完成后将结果传递给下游的Sink；</li>
 <li>如果下游的Sink是短路操作，将结果传递给下游时不断询问下游cancellationRequested()是否可以结束处理。</li>
 </ol>
-<h3 id="叠加之后的操作如何执行"><a href="#叠加之后的操作如何执行" class="headerlink" title="叠加之后的操作如何执行"></a>叠加之后的操作如何执行</h3><p><img src="https://wx3.sinaimg.cn/large/006tKfTcgy1g0gq7rl9lyj30go0jhdh7.jpg" alt="Stream_pipeline_Sink"></p>
+<h3 id="叠加之后的操作如何执行"><a href="#叠加之后的操作如何执行" class="headerlink" title="叠加之后的操作如何执行"></a>叠加之后的操作如何执行</h3><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tKfTcgy1g0gq7rl9lyj30go0jhdh7.jpg" alt="Stream_pipeline_Sink"></p>
 <p>Sink完美封装了Stream每一步操作，并给出了[处理-&gt;转发]的模式来叠加操作。这一连串的齿轮已经咬合，就差最后一步拨动齿轮启动执行。是什么启动这一连串的操作呢？也许你已经想到了启动的原始动力就是结束操作(Terminal Operation)，一旦调用某个结束操作，就会触发整个流水线的执行。</p>
 <p>结束操作之后不能再有别的操作，所以结束操作不会创建新的流水线阶段(Stage)，直观的说就是流水线的链表不会在往后延伸了。结束操作会创建一个包装了自己操作的Sink，这也是流水线中最后一个Sink，这个Sink只需要处理数据而不需要将结果传递给下游的Sink（因为没有下游）。对于Sink的[处理-&gt;转发]模型，结束操作的Sink就是调用链的出口。</p>
 <p>我们再来考察一下上游的Sink是如何找到下游Sink的。一种可选的方案是在<em>PipelineHelper</em>中设置一个Sink字段，在流水线中找到下游Stage并访问Sink字段即可。但Stream类库的设计者没有这么做，而是设置了一个<code>Sink AbstractPipeline.opWrapSink(int flags, Sink downstream)</code>方法来得到Sink，该方法的作用是返回一个新的包含了当前Stage代表的操作以及能够将结果传递给downstream的Sink对象。为什么要产生一个新对象而不是返回一个Sink字段？这是因为使用opWrapSink()可以将当前操作与下游Sink（上文中的downstream参数）结合成新Sink。试想只要从流水线的最后一个Stage开始，不断调用上一个Stage的opWrapSink()方法直到最开始（不包括stage0，因为stage0代表数据源，不包含操作），就可以得到一个代表了流水线上所有操作的Sink，用代码表示就是这样：</p>
@@ -880,7 +880,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
+              <img referrerPolicy="no-referrer" class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
             
               <p class="site-author-name" itemprop="name">二当家的</p>
               <p class="site-description motion-element" itemprop="description">技术改变世界</p>

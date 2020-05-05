@@ -602,11 +602,11 @@
         <p>Fescar 是 <strong>阿里巴巴</strong> 开源的 <strong>分布式事务</strong>中间件，以 <strong>高效</strong> 并且对业务 <strong>0 侵入</strong> 的方式，解决 <strong>微服务</strong> 场景下面临的分布式事务问题。</p>
 <h1 id="1-什么是微服务化带来的分布式事务问题？"><a href="#1-什么是微服务化带来的分布式事务问题？" class="headerlink" title="1. 什么是微服务化带来的分布式事务问题？"></a>1. 什么是微服务化带来的分布式事务问题？</h1><p>首先，设想一个传统的单体应用（Monolithic App），通过 3 个 Module，在同一个数据源上更新数据来完成一项业务。</p>
 <p>很自然的，整个业务过程的数据一致性由本地事务来保证。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68bvt4smj30bl073gls.jpg" alt="Monolithic architecture"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68bvt4smj30bl073gls.jpg" alt="Monolithic architecture"></p>
 <p>随着业务需求和架构的变化，单体应用被拆分为微服务：原来的 3 个 Module 被拆分为 3 个独立的服务，分别使用独立的数据源（<a href="http://microservices.io/patterns/data/database-per-service.html" target="_blank" rel="noopener">Pattern: Database per service</a>）。业务过程将由 3 个服务的调用来完成。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68c0388jj30f20cmdge.jpg" alt="Microservices architecture"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68c0388jj30f20cmdge.jpg" alt="Microservices architecture"></p>
 <p>此时，每一个服务内部的数据一致性仍由本地事务来保证。而整个业务层面的全局数据一致性要如何保障呢？这就是微服务架构下面临的，典型的分布式事务需求：我们需要一个分布式事务的解决方案保障业务全局的数据一致性。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68c4srp3j30o40d53zb.jpg" alt="Fescar Solution"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68c4srp3j30o40d53zb.jpg" alt="Fescar Solution"></p>
 <h1 id="2-Fescar-的发展历程"><a href="#2-Fescar-的发展历程" class="headerlink" title="2. Fescar 的发展历程"></a>2. Fescar 的发展历程</h1><p>阿里是国内最早一批进行应用分布式（微服务化）改造的企业，所以很早就遇到微服务架构下的分布式事务问题。</p>
 <p>2014 年，阿里中间件团队发布 <strong>TXC（Taobao Transaction Constructor）</strong>，为集团内应用提供分布式事务服务。</p>
 <p>2016 年，TXC 经过产品化改造，以 <strong>GTS（Global Transaction Service）</strong> 的身份登陆阿里云，成为当时业界唯一一款云上分布式事务产品，在阿云里的公有云、专有云解决方案中，开始服务于众多外部客户。</p>
@@ -641,9 +641,9 @@
 <h1 id="3-原理和设计"><a href="#3-原理和设计" class="headerlink" title="3. 原理和设计"></a>3. 原理和设计</h1><p>我们要设计一个对业务无侵入的方案，所以从业务无侵入的 XA 方案来思考：</p>
 <p>是否可以在 XA 的基础上演进，解决掉 XA 方案面临的问题呢？</p>
 <h3 id="3-1-如何定义一个分布式事务？"><a href="#3-1-如何定义一个分布式事务？" class="headerlink" title="3.1 如何定义一个分布式事务？"></a>3.1 如何定义一个分布式事务？</h3><p>首先，很自然的，我们可以把一个分布式事务理解成一个包含了若干 <strong>分支事务</strong> 的 <strong>全局事务</strong>。<strong>全局事务</strong> 的职责是协调其下管辖的 <strong>分支事务</strong> 达成一致，要么一起成功提交，要么一起失败回滚。此外，通常 <strong>分支事务</strong> 本身就是一个满足 ACID 的 <strong>本地事务</strong>。这是我们对分布式事务结构的基本认识，与 XA 是一致的。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68c9fqypj30ji07sjsm.jpg" alt="Global &amp; Branch Transaction"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68c9fqypj30ji07sjsm.jpg" alt="Global &amp; Branch Transaction"></p>
 <p>其次，与 XA 的模型类似，我们定义 3 个组件来协议分布式事务的处理过程。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cavlbsj30c309tdfr.jpg" alt="FESCAR Model"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cavlbsj30c309tdfr.jpg" alt="FESCAR Model"></p>
 <ul>
 <li><strong>Transaction Coordinator (TC)：</strong> 事务协调器，维护全局事务的运行状态，负责协调并驱动全局事务的提交或回滚。</li>
 <li><strong>Transaction Manager (TM)：</strong> 控制全局事务的边界，负责开启一个全局事务，并最终发起全局提交或全局回滚的决议。</li>
@@ -657,35 +657,35 @@
 <li>TM 向 TC 发起针对 XID 的全局提交或回滚决议。</li>
 <li>TC 调度 XID 下管辖的全部分支事务完成提交或回滚请求。</li>
 </ol>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cejqrgj30m20da0th.jpg" alt="Architecture"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cejqrgj30m20da0th.jpg" alt="Architecture"></p>
 <p>至此，Fescar 的协议机制总体上看与 XA 是一致的。</p>
-<h3 id="3-2-与-XA-的差别在什么地方？"><a href="#3-2-与-XA-的差别在什么地方？" class="headerlink" title="3.2 与 XA 的差别在什么地方？"></a>3.2 与 XA 的差别在什么地方？</h3><h4 id="架构层次"><a href="#架构层次" class="headerlink" title="架构层次"></a>架构层次</h4><p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68ci12ubj30md0843yz.jpg" alt="RM in Architecture"></p>
+<h3 id="3-2-与-XA-的差别在什么地方？"><a href="#3-2-与-XA-的差别在什么地方？" class="headerlink" title="3.2 与 XA 的差别在什么地方？"></a>3.2 与 XA 的差别在什么地方？</h3><h4 id="架构层次"><a href="#架构层次" class="headerlink" title="架构层次"></a>架构层次</h4><p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68ci12ubj30md0843yz.jpg" alt="RM in Architecture"></p>
 <p>XA 方案的 RM 实际上是在数据库层，RM 本质上就是数据库自身（通过提供支持 XA 的驱动程序来供应用使用）。</p>
 <p>而 Fescar 的 RM 是以二方包的形式作为中间件层部署在应用程序这一侧的，不依赖与数据库本身对协议的支持，当然也不需要数据库支持 XA 协议。这点对于微服务化的架构来说是非常重要的：应用层不需要为本地事务和分布式事务两类不同场景来适配两套不同的数据库驱动。</p>
 <p>这个设计，剥离了分布式事务方案对数据库在 <strong>协议支持</strong> 上的要求。</p>
 <h4 id="两阶段提交"><a href="#两阶段提交" class="headerlink" title="两阶段提交"></a>两阶段提交</h4><p>先来看一下 XA 的 2PC 过程。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cknwvwj30m80dzjrn.jpg" alt="XA-2PC"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cknwvwj30m80dzjrn.jpg" alt="XA-2PC"></p>
 <p>无论 Phase2 的决议是 commit 还是 rollback，事务性资源的锁都要保持到 Phase2 完成才释放。</p>
 <p>设想一个正常运行的业务，大概率是 90% 以上的事务最终应该是成功提交的，我们是否可以在 Phase1 就将本地事务提交呢？这样 90% 以上的情况下，可以省去 Phase2 持锁的时间，整体提高效率。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cm3kppj30m80dz74m.jpg" alt="FESCAR-2PC"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cm3kppj30m80dz74m.jpg" alt="FESCAR-2PC"></p>
 <p>这个设计，在绝大多数场景减少了事务持锁时间，从而提高了事务的并发度。</p>
 <p>当然，你肯定会问：Phase1 即提交的情况下，Phase2 如何回滚呢？</p>
 <h2 id="3-3-分支事务如何提交和回滚？"><a href="#3-3-分支事务如何提交和回滚？" class="headerlink" title="3.3 分支事务如何提交和回滚？"></a>3.3 分支事务如何提交和回滚？</h2><p>首先，应用需要使用 Fescar 的 JDBC 数据源代理，也就是 Fescar 的 RM。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68co011mj309b092aa7.jpg" alt="Data Source Proxy"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68co011mj309b092aa7.jpg" alt="Data Source Proxy"></p>
 <p><strong>Phase1：</strong></p>
 <p>Fescar 的 JDBC 数据源代理通过对业务 SQL 的解析，把业务数据在更新前后的数据镜像组织成回滚日志，利用 <strong>本地事务</strong> 的 ACID 特性，将业务数据的更新和回滚日志的写入在同一个 <strong>本地事务</strong> 中提交。</p>
 <p>这样，可以保证：任何提交的业务数据的更新一定有相应的回滚日志存在。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cpyutvj30pf0cbab5.jpg" alt="Branch Transaction with UNDO LOG"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cpyutvj30pf0cbab5.jpg" alt="Branch Transaction with UNDO LOG"></p>
 <p>基于这样的机制，分支的本地事务便可以在全局事务的 Phase1 提交，马上释放本地事务锁定的资源。</p>
 <p><strong>Phase2：</strong></p>
 <ul>
 <li>如果决议是全局提交，此时分支事务此时已经完成提交，不需要同步协调处理（只需要异步清理回滚日志），Phase2 可以非常快速地完成。</li>
 </ul>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cs3veij30pf0bft9c.jpg" alt="Global Commit"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cs3veij30pf0bft9c.jpg" alt="Global Commit"></p>
 <ul>
 <li>如果决议是全局回滚，RM 收到协调器发来的回滚请求，通过 XID 和 Branch ID 找到相应的回滚日志记录，通过回滚记录生成反向的更新 SQL 并执行，以完成分支的回滚。</li>
 </ul>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cskvz9j30pf0cbaaz.jpg" alt="Global Rollback"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cskvz9j30pf0cbaaz.jpg" alt="Global Rollback"></p>
 <h2 id="3-4-事务传播机制"><a href="#3-4-事务传播机制" class="headerlink" title="3.4 事务传播机制"></a>3.4 事务传播机制</h2><p>XID 是一个全局事务的唯一标识，事务传播机制要做的就是把 XID 在服务调用链路中传递下去，并绑定到服务的事务上下文中，这样，服务链路中的数据库更新操作，就都会向该 XID 代表的全局事务注册分支，纳入同一个全局事务的管辖。</p>
 <p>基于这个机制，Fescar 是可以支持任何微服务 RPC 框架的。只要在特定框架中找到可以透明传播 XID 的机制即可，比如，Dubbo 的 Filter + RpcContext。</p>
 <p>对应到 Java EE 规范和 Spring 定义的事务传播属性，Fescar 的支持如下：</p>
@@ -702,7 +702,7 @@
 <p>在数据库本地隔离级别 <strong>读已提交</strong> 或以上的前提下，Fescar 设计了由事务协调器维护的 <strong>全局写排他锁</strong>，来保证事务间的 <strong>写隔离</strong>，将全局事务默认定义在 <strong>读未提交</strong> 的隔离级别上。</p>
 <p>我们对隔离级别的共识是：绝大部分应用在 <strong>读已提交</strong> 的隔离级别下工作是没有问题的。而实际上，这当中又有绝大多数的应用场景，实际上工作在 <strong>读未提交</strong> 的隔离级别下同样没有问题。</p>
 <p>在极端场景下，应用如果需要达到全局的 <strong>读已提交</strong>，Fescar 也提供了相应的机制来达到目的。默认，Fescar 是工作在 <strong>读无提交</strong> 的隔离级别下，保证绝大多数场景的高效性。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cwsm55j30hi08075g.jpg" alt="Isolation"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68cwsm55j30hi08075g.jpg" alt="Isolation"></p>
 <p>事务的 ACID 属性在 Fescar 中的体现是一个比较复杂的话题，我们会有专门的文章来深入分析，这里不做进一步展开。</p>
 <h1 id="4-适用场景分析"><a href="#4-适用场景分析" class="headerlink" title="4. 适用场景分析"></a>4. 适用场景分析</h1><p>前文所述的 Fescar 的核心原理中有一个 <strong>重要前提</strong>：分支事务中涉及的资源，<strong>必须</strong> 是支持 <strong>ACID 事务</strong>的 <strong>关系型数据库</strong>。分支的提交和回滚机制，都依赖于本地事务的保障。所以，如果应用使用的数据库是不支持事务的，或根本不是关系型数据库，就不适用。</p>
 <p>另外，目前 Fescar 的实现还存在一些局限，比如：事务隔离级别最高支持到 <strong>读已提交</strong> 的水平，SQL 的解析还不能涵盖全部的语法等。</p>
@@ -715,15 +715,15 @@
 <li><strong>分支提交</strong>：响应协调器发出的分支事务提交的请求，完成分支提交。</li>
 <li><strong>分支回滚</strong>：响应协调器发出的分支事务回滚的请求，完成分支回滚。</li>
 </ul>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68czpslxj30ji0a8mx8.jpg" alt="How does RM talk to TC"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68czpslxj30ji0a8mx8.jpg" alt="How does RM talk to TC"></p>
 <h2 id="4-2-AT-模式分支的行为模式"><a href="#4-2-AT-模式分支的行为模式" class="headerlink" title="4.2 AT 模式分支的行为模式"></a>4.2 AT 模式分支的行为模式</h2><p>业务逻辑不需要关注事务机制，分支与全局事务的交互过程自动进行。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz6h915df2j30oy0bktak.jpg" alt="AT branch"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz6h915df2j30oy0bktak.jpg" alt="AT branch"></p>
 <h2 id="4-3-MT-模式分支的行为模式"><a href="#4-3-MT-模式分支的行为模式" class="headerlink" title="4.3 MT 模式分支的行为模式"></a>4.3 MT 模式分支的行为模式</h2><p>业务逻辑需要被分解为 Prepare/Commit/Rollback 3 部分，形成一个 MT 分支，加入全局事务。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68d2icv4j30mq0bldge.jpg" alt="MT branch"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68d2icv4j30mq0bldge.jpg" alt="MT branch"></p>
 <p>MT 模式一方面是 AT 模式的补充。另外，更重要的价值在于，通过 MT 模式可以把众多非事务性资源纳入全局事务的管理中。</p>
 <h2 id="4-4-混合模式"><a href="#4-4-混合模式" class="headerlink" title="4.4 混合模式"></a>4.4 混合模式</h2><p>因为 AT 和 MT 模式的分支从根本上行为模式是一致的，所以可以完全兼容，即，一个全局事务中，可以同时存在 AT 和 MT 的分支。这样就可以达到全面覆盖业务场景的目的：AT 模式可以支持的，使用 AT 模式；AT 模式暂时支持不了的，用 MT 模式来替代。另外，自然的，MT 模式管理的非事务性资源也可以和支持事务的关系型数据库资源一起，纳入同一个分布式事务的管理中。</p>
 <h2 id="4-5-应用场景的远景"><a href="#4-5-应用场景的远景" class="headerlink" title="4.5 应用场景的远景"></a>4.5 应用场景的远景</h2><p>回到我们设计的初衷：一个理想的分布式事务解决方案是不应该侵入业务的。MT 模式是在 AT 模式暂时不能完全覆盖所有场景的情况下，一个比较自然的补充方案。我们希望通过 AT 模式的不断演进增强，逐步扩大所支持的场景，MT 模式逐步收敛。未来，我们会纳入对 XA 的原生支持，用 XA 这种无侵入的方式来覆盖 AT 模式无法触达的场景。</p>
-<p><img src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68d4qzc2j30jr098aa2.jpg" alt="Roadmap of transaction mode"></p>
+<p><img referrerPolicy="no-referrer" src="https://wx3.sinaimg.cn/large/006tNc79gy1fz68d4qzc2j30jr098aa2.jpg" alt="Roadmap of transaction mode"></p>
 <blockquote>
 <p>更多信息请查看阿里的GitHub：<a href="https://github.com/alibaba/fescar" target="_blank" rel="noopener">https://github.com/alibaba/fescar</a></p>
 </blockquote>
@@ -896,7 +896,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
+              <img referrerPolicy="no-referrer" class="site-author-image" itemprop="image" src="https://wx3.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg" alt="二当家的">
             
               <p class="site-author-name" itemprop="name">二当家的</p>
               <p class="site-description motion-element" itemprop="description">技术改变世界</p>
