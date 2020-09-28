@@ -129,7 +129,7 @@
 <meta property="og:site_name" content="二当家的黑板报">
 <meta property="og:description" content="普片来说，后端服务系统，大部分都是需要和数据库打交道的。对于简单的系统，可能数据库操作的代码编写时间就占据了整个系统开发时间的40%。频繁的数据表到对象的映射编码，或对象到数据表映射编码，大多数都是繁琐、低效的低等工作。 所以市面上都有这些问题的解决方案，如：hibernate、mybatis和JdbcTemplate等，hibernate效率低、笨重，mybatis的编写风格不太喜欢，所以笔者要">
 <meta property="og:locale" content="zh">
-<meta property="og:updated_time" content="2020-05-05T05:59:27.810Z">
+<meta property="og:updated_time" content="2020-05-21T02:02:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JdbcTemplate简化数据库操作">
 <meta name="twitter:description" content="普片来说，后端服务系统，大部分都是需要和数据库打交道的。对于简单的系统，可能数据库操作的代码编写时间就占据了整个系统开发时间的40%。频繁的数据表到对象的映射编码，或对象到数据表映射编码，大多数都是繁琐、低效的低等工作。 所以市面上都有这些问题的解决方案，如：hibernate、mybatis和JdbcTemplate等，hibernate效率低、笨重，mybatis的编写风格不太喜欢，所以笔者要">
@@ -476,7 +476,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2020-05-05 13:59:27" itemprop="dateModified" datetime="2020-05-05T13:59:27+08:00">2020-05-05</time>
+                <time title="Modified: 2020-05-21 10:02:55" itemprop="dateModified" datetime="2020-05-21T10:02:55+08:00">2020-05-21</time>
               
             
           </span>
@@ -502,16 +502,6 @@
           
 
           
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2019/01/28/JdbcTemplate简化数据库操作/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">Comments: </span> <span class="post-comments-count valine-comment-count" data-xid="/2019/01/28/JdbcTemplate简化数据库操作/" itemprop="commentCount"></span>
-                </a>
-              </span>
             
           
 
@@ -586,7 +576,7 @@
 <h2 id="insert"><a href="#insert" class="headerlink" title="insert"></a>insert</h2><p>个人习惯，每个表都用long类型记录创建时间和修改时间，所以insert操作基本可以用一下模板来写：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">insert</span><span class="params">(Po po)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">long</span> curTime = System.currentTimeMillis();</span><br><span class="line">            po.setCreateTime(curTime);</span><br><span class="line">            po.setUpdateTime(curTime);</span><br><span class="line"></span><br><span class="line">            SimpleJdbcInsert insert = <span class="keyword">new</span> SimpleJdbcInsert(jdbcTemplate).withTableName(tableName);</span><br><span class="line">            SqlParameterSource parameterSource = <span class="keyword">new</span> BeanPropertySqlParameterSource(po);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> insert.execute(parameterSource) &gt; <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (DuplicateKeyException e) &#123;</span><br><span class="line">            <span class="comment">// TODO 重复插入的的处理，可以返回true，也可以抛异常，按业务需求来定</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// TODO 打印日志并抛异常即可</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
-<p><code>insert.execute</code>方法，无论是因为是主键重复，还是unique key重复，都会抛<code>DuplicateKeyException</code>异常，所以只需要catch这个异常，就可以处理重复插入的处理。<br>使用<code>insert.executeAndReturnKey</code>来代替<code>insert.execute</code>方法，可以获取数据库自增的id。</p>
+<p><code>insert.execute</code>方法，无论是因为是主键重复，还是unique key重复，都会抛<code>DuplicateKeyException</code>异常，所以只需要catch这个异常，就可以处理重复插入的处理。<br>补充方法指定自增id字段 <code>usingGeneratedKeyColumns(&quot;id&quot;)</code>，并使用<code>insert.executeAndReturnKey</code>来代替<code>insert.execute</code>方法，可以获取数据库自增的id。</p>
 <p>重点来说一下<code>BeanPropertySqlParameterSource</code>，它会自动将对象的属性映射到数据表的字段中，底层原理并不是简单的属性转换，而是对象和表字段匹配。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Object&gt; <span class="title">matchInParameterValuesWithInsertColumns</span><span class="params">(SqlParameterSource parameterSource)</span> </span>&#123;</span><br><span class="line">	List&lt;Object&gt; values = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">	<span class="comment">//去掉大小写敏感获得的map</span></span><br><span class="line">	Map&lt;String, String&gt; caseInsensitiveParameterNames = SqlParameterSourceUtils.extractCaseInsensitiveParameterNames(parameterSource);</span><br><span class="line">	<span class="keyword">for</span> (String column : <span class="keyword">this</span>.tableColumns) &#123;</span><br><span class="line">        <span class="comment">//属性名直接匹配字段名</span></span><br><span class="line">		<span class="keyword">if</span> (parameterSource.hasValue(column)) &#123;</span><br><span class="line">			values.add(SqlParameterSourceUtils.getTypedValue(parameterSource, column));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//属性名和字段全小写名匹配</span></span><br><span class="line">			String lowerCaseName = column.toLowerCase();</span><br><span class="line">			<span class="keyword">if</span> (parameterSource.hasValue(lowerCaseName)) &#123;</span><br><span class="line">				values.add(SqlParameterSourceUtils.getTypedValue(parameterSource, lowerCaseName));</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//属性名匹配字段名的下划线格式</span></span><br><span class="line">				String propertyName = JdbcUtils.convertUnderscoreNameToPropertyName(column);</span><br><span class="line">				<span class="keyword">if</span> (parameterSource.hasValue(propertyName)) &#123;</span><br><span class="line">					values.add(SqlParameterSourceUtils.getTypedValue(parameterSource, propertyName));</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">//属性小写名和字段小写名匹配</span></span><br><span class="line">					<span class="keyword">if</span> (caseInsensitiveParameterNames.containsKey(lowerCaseName)) &#123;</span><br><span class="line">						values.add(SqlParameterSourceUtils.getTypedValue(</span><br><span class="line">								parameterSource, caseInsensitiveParameterNames.get(lowerCaseName)));</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">//没有匹配到</span></span><br><span class="line">						values.add(<span class="keyword">null</span>);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> values;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -752,9 +742,15 @@
 
 
   
-    <div class="comments" id="comments">
-    </div>
+	<div class="comments" id="comments">
+	  
+  <script src="https://utteranc.es/client.js" repo="gzlicanyi/comment" issue-term="title" theme="github-light" crossorigin="anonymous" async>
+  </script>
 
+
+	</div>
+
+    
   
 
 
@@ -1203,31 +1199,6 @@
 
 
 
-
-  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-  
-  
-  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-  
-  <script type="text/javascript">
-    var GUEST = ['nick','mail','link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(function (item) {
-      return GUEST.indexOf(item)>-1;
-    });
-    new Valine({
-        el: '#comments' ,
-        verify: true,
-        notify: true,
-        appId: 'yx078dulj2dUnlHnrhniBsyN-gzGzoHsz',
-        appKey: 'iXTbkfmqGigUmncpaWmCUf2J',
-        placeholder: '留言（左边Overview微信公众号二维码，关注并留言可快速回复）',
-        avatar:'mm',
-        meta:guest,
-        pageSize:'10' || 10,
-        visitor: false
-    });
-  </script>
 
 
 

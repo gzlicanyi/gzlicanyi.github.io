@@ -130,7 +130,7 @@
 <meta property="og:description" content="关于本站2014年开始在csdn上写博客，很感谢csdn让我拥有一个可以与大家分享的平台，断断续续写了一段时间，发现csdn功能有些受限，很多想法无法实现，故开始自己尝试建立博客。 目前本站使用的是开源的hexo搭建，省心省力，可以让自己专注于写作。 个人比较懒，建站除了分享技术文章之外，也是为了督促自己，坚持一天一个脚印，不忘初心，相信技术改变世界。 本站博文会第一时间更新，偶尔会同步到其他博客">
 <meta property="og:locale" content="zh">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNbRwgy1fy327mja9wj308c08cjri.jpg">
-<meta property="og:updated_time" content="2018-12-16T07:45:01.346Z">
+<meta property="og:updated_time" content="2018-12-16T07:45:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="简介">
 <meta name="twitter:description" content="关于本站2014年开始在csdn上写博客，很感谢csdn让我拥有一个可以与大家分享的平台，断断续续写了一段时间，发现csdn功能有些受限，很多想法无法实现，故开始自己尝试建立博客。 目前本站使用的是开源的hexo搭建，省心省力，可以让自己专注于写作。 个人比较懒，建站除了分享技术文章之外，也是为了督促自己，坚持一天一个脚印，不忘初心，相信技术改变世界。 本站博文会第一时间更新，偶尔会同步到其他博客">
@@ -486,9 +486,15 @@
 
 
   
-    <div class="comments" id="comments">
-    </div>
+	<div class="comments" id="comments">
+	  
+  <script src="https://utteranc.es/client.js" repo="gzlicanyi/comment" issue-term="title" theme="github-light" crossorigin="anonymous" async>
+  </script>
 
+
+	</div>
+
+    
   
 
 
@@ -937,31 +943,6 @@
 
 
 
-
-  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-  
-  
-  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-  
-  <script type="text/javascript">
-    var GUEST = ['nick','mail','link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(function (item) {
-      return GUEST.indexOf(item)>-1;
-    });
-    new Valine({
-        el: '#comments' ,
-        verify: true,
-        notify: true,
-        appId: 'yx078dulj2dUnlHnrhniBsyN-gzGzoHsz',
-        appKey: 'iXTbkfmqGigUmncpaWmCUf2J',
-        placeholder: '留言（左边Overview微信公众号二维码，关注并留言可快速回复）',
-        avatar:'mm',
-        meta:guest,
-        pageSize:'10' || 10,
-        visitor: false
-    });
-  </script>
 
 
 
